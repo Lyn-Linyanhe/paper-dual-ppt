@@ -14,6 +14,7 @@
     "references/image-slots.md",
     "references/paper-types.md",
     "references/ppt-master-integration.md",
+    "references/revision.md",
     "references/visual-language.md",
     "scripts/paper_tools.py",
     "scripts/build_neutral_template.py",
