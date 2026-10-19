@@ -12,7 +12,7 @@
 | `picture` / `media` | 一个 `<image>`（标记为 carrier） |
 | `object` | 文本、图片、基本形状或紧凑 authored-preset `<g>`，或 `binding="proxy"` 的复合槽 |
 
-把 `<image>` 放进 `body` 槽会破坏该 Layout 的槽位契约：同一 Layout 的所有页面必须保持相同的 slot id、类型、索引、边界与绑定方式。导出器不会替你「猜」这是一张图。
+把 `<image>` 放进 `body` 槽会破坏该 Layout 的槽位契约：同一 Layout 的所有页面必须保持相同的 slot id、类型、索引、边界与绑定方式。导出器不会替你「猜」这是一张图，校验会报 `placeholder 'body' must be carried by one direct <text> child` 之类的错误。
 
 ## 2. 三种合法做法
 
@@ -23,9 +23,36 @@
 2. **在现有 Layout 新增一个 picture 槽**  
    仅当该 Layout 下所有页面都需要这个槽时才成立；槽位集合按 Layout 共享，不能只给某一页加。
 3. **改为 Slide-local 内容**  
-   当该页确实是自由设计、不属于任何结构化槽位时，把图片作为页面本地内容放置，并保证不与槽位内容重叠。此时不要声称它承载了某个占位符。
+   该页若确实不属于结构化槽位，可把图片作为页面本地内容放置：一个根级 `<g>` 带页面坐标 `data-pptx-bounds`，内部放 `<image href="../images/...">`，不与槽位内容重叠。这不需要原型声明 picture 槽，也不会报错；但此时它不承载任何占位符，不要声称它是槽位内容。
 
 不可行的做法：把图片伪装成文本、把图片截成字符画、用示意图替代原图、把原图缩到看不清再硬塞。
+
+## 2.1 合法槽位类型与载体
+
+| 槽位类型 | 合法载体 | PowerPoint 占位符 |
+|---|---|---|
+| `title` / `subtitle` / `body` | 一个 `<text data-pptx-carrier="true">` | `title` / `subTitle` / `body` |
+| `picture` | 一个 `<image data-pptx-carrier="true">`（推荐） | `pic` |
+| `media` | 一个 `<image>`；只承载画面，不合成音视频 | `media` |
+| `object` | 文本、图片、基本形状或紧凑 authored-preset `<g>`，或声明 `binding="proxy"` 的复合槽 | `obj` |
+
+想让图片在 PowerPoint 里成为真正的图片占位符，用 `picture`，不要用 `object`。
+
+picture 槽的写法（槽 `<g>` 是根级直接子元素，只带 `id` 与 `data-pptx-*`）：
+
+```xml
+<g id="picture-slot" data-pptx-placeholder="picture" data-pptx-idx="2"
+   data-pptx-bounds="64 120 752 500">
+  <image id="picture-carrier" data-pptx-carrier="true"
+         x="64" y="120" width="752" height="500"
+         preserveAspectRatio="xMidYMid meet"
+         href="../images/fig5.png"/>
+</g>
+```
+
+- 槽的 `data-pptx-bounds` 是可复用设计区；carrier 的 `x/y/width/height` 是本页可见几何，可以与槽默认框不同。
+- `data-pptx-frame` 只由 preset helper 写，手写会让校验失败；普通内容组不要用它。
+- 模板原型里常用 1×1 的 base64 图片当中性占位，这是模板侧做法；项目页面应引用 `../images/` 下的真实文件。
 
 ## 3. 新增 Layout 时要同步的文件
 
@@ -57,7 +84,9 @@
 
 导出前至少确认：
 
-- 使用图片的页面，其 Layout 在锁中确实声明了 `picture` 槽；
-- 图片文件存在、尺寸可读、比例与容器匹配；
+- 放图片的槽只有一种走法：已声明的 picture 槽，或 Slide-local；没有把 `<image>` 放进 title/subtitle/body 槽；
+- 同一 Layout 的各页槽位 id、类型、索引、边界与绑定方式一致；页面没有自行新增原型未声明的槽；
+- 图片作为固定 `data-pptx-layer="layout"` 原子时，每页内容相同；会变的图片放槽或留在页面本地；
+- 图片文件存在、有显式正 `width`/`height`、只有一个非空 `href`、`preserveAspectRatio` 拼写合法；
 - 页面本地图片没有与槽位内容重叠；
 - 最终 PDF 中图片清晰、未变形、未裁掉关键部分。
