@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "description": "Explicit allowlist for the shareable paper-dual-ppt Skill and neutral template. No source papers, test projects, logs, caches, or private configuration.",
+  "files": [
+    "share-manifest.json",
+    "SKILL.md",
+    "README.md",
+    "LICENSE.txt",
+    "examples/test-prompts.md",
+    "references/acceptance.md",
+    "references/argument-integrity.md",
+    "references/content-contract.md",
+    "references/defaults.md",
+    "references/image-slots.md",
+    "references/paper-types.md",
+    "references/ppt-master-integration.md",
+    "references/visual-language.md",
+    "scripts/paper_tools.py",
+    "scripts/build_neutral_template.py",
+    "assets/neutral-academic_20261017/templates/design_spec.deck.neutral-academic.md",
+    "assets/neutral-academic_20261017/templates/01_cover.svg",
+    "assets/neutral-academic_20261017/templates/02_chapter.svg",
+    "assets/neutral-academic_20261017/templates/03a_content_quote.svg",
+    "assets/neutral-academic_20261017/templates/03b_content_flow.svg",
+    "assets/neutral-academic_20261017/templates/03c_content_compare.svg",
+    "assets/neutral-academic_20261017/templates/03d_content_evidence.svg",
+    "assets/neutral-academic_20261017/templates/04_ending.svg",
+    "assets/neutral-academic_20261017/exports/neutral-academic_template_preview.pptx"
+  ]
+}

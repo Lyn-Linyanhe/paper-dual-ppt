@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local test and delivery artifacts
+local-validation/
+papertok-*/
+*_delivery/
+_verify_*.py
+_readonly_probe.zip
+
+# Logs, caches and environments
+*.log
+.pytest_cache/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+~$*
